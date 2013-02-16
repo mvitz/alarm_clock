@@ -9,14 +9,19 @@ public interface UI {
 
     void time(DateTime time);
 
+    void start();
+
     void remainingTime(Duration remainingTime);
 
     void expire();
+
+    void stop();
 
     void addObserver(Observer observer);
 
     interface Observer {
         void onAlarmSet(DateTime time, Duration duration);
+        void onStopRequested();
     }
 
 }

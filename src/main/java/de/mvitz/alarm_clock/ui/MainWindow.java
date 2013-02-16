@@ -45,13 +45,26 @@ public final class MainWindow implements UI, MainView.Observer {
     }
 
     @Override
+    public void start() {
+        view.setEnabled(false);
+        view.setRemainingTime(null);
+    }
+
+    @Override
     public void remainingTime(Duration remainingTime) {
         view.setRemainingTime(remainingTime);
     }
 
     @Override
     public void expire() {
-        view.setRemainingTime(new Duration(0));
+        view.setEnabled(true);
+        view.setRemainingTime(null);
+    }
+
+    @Override
+    public void stop() {
+        view.setEnabled(true);
+        view.setRemainingTime(null);
     }
 
     @Override
@@ -60,6 +73,13 @@ public final class MainWindow implements UI, MainView.Observer {
         final Duration idlePeriod = view.getIdlePeriod();
         for (final Observer observer : observers) {
             observer.onAlarmSet(alarmTime, idlePeriod);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        for (final Observer observer : observers) {
+            observer.onStopRequested();
         }
     }
 

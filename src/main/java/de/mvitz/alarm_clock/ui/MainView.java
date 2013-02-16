@@ -35,6 +35,8 @@ public final class MainView implements ActionListener {
     private final JLabel remainingTimeLabel;
     private final JTextField alarmTimeField;
     private final JTextField idlePeriodField;
+    private final JButton startButton;
+    private final JButton stopButton;
 
     public MainView() {
         panel = new JPanel(new GridLayout(0, 2));
@@ -55,9 +57,28 @@ public final class MainView implements ActionListener {
         panel.add(new JLabel("Idle period:"));
         panel.add(idlePeriodField);
 
-        final JButton startButton = new JButton("Start");
-        startButton.addActionListener(this);
+        startButton = new JButton("Start");
+        startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (final Observer observer : observers) {
+                    observer.onStart();
+                }
+            }
+        });
         panel.add(startButton);
+
+        stopButton = new JButton("Stop");
+        stopButton.setEnabled(false);
+        stopButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (final Observer observer : observers) {
+                    observer.onStop();
+                }
+            }
+        });
+        panel.add(stopButton);
     }
 
     void addObserver(Observer observer) {
@@ -69,7 +90,16 @@ public final class MainView implements ActionListener {
     }
 
     void setRemainingTime(Duration remainingTime) {
-        remainingTimeLabel.setText(PERIOD_FMT.print(remainingTime.toPeriod()));
+        if (remainingTime == null) {
+            remainingTimeLabel.setText("");
+        } else {
+            remainingTimeLabel.setText(PERIOD_FMT.print(remainingTime.toPeriod()));
+        }
+    }
+
+    void setEnabled(boolean enabled) {
+        startButton.setEnabled(enabled);
+        stopButton.setEnabled(!enabled);
     }
 
     DateTime getAlarmTime() {
@@ -100,13 +130,12 @@ public final class MainView implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        for (final Observer observer : observers) {
-            observer.onStart();
-        }
+
     }
 
     interface Observer {
         void onStart();
+        void onStop();
     }
 
 }

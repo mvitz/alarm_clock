@@ -13,7 +13,7 @@ public final class DefaultAlarmClock implements AlarmClock {
 
     private final List<Observer> observers = new LinkedList<>();
 
-    private boolean started = false;
+    private boolean running = false;
     private DateTime time;
 
     @Override
@@ -25,15 +25,18 @@ public final class DefaultAlarmClock implements AlarmClock {
     public void start(DateTime theAlarmTime, Duration duration) {
         System.out.println("start(" + theAlarmTime + "," + duration + ")");
         final DateTime alarmTime = calculateAlarmTime(theAlarmTime, duration);
-        started = true;
-        while (started) {
+        running = true;
+        for (final Observer observer : observers) {
+            observer.onStart();
+        }
+        while (running) {
             final Duration remainingTime = calculateRemainingTime(alarmTime);
             if (remainingTime.isShorterThan(new Duration(0))) {
-                started = false;
+                running = false;
             }
             for (final Observer observer : observers) {
                 observer.onRemainingTime(remainingTime);
-                if (!started) {
+                if (!running) {
                     observer.onExpired();
                 }
             }
@@ -54,6 +57,14 @@ public final class DefaultAlarmClock implements AlarmClock {
 
     private Duration calculateRemainingTime(DateTime alarmTime) {
         return new Duration(time, alarmTime);
+    }
+
+    @Override
+    public void stop() {
+        running = false;
+        for (final Observer observer : observers) {
+            observer.onStopped();
+        }
     }
 
     @Override

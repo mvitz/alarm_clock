@@ -68,6 +68,17 @@ public final class AlarmClockApplication implements Clock.ClockObserver, UI.Obse
     }
 
     @Override
+    public void onStart() {
+        System.out.println("onStart()");
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                ui.start();
+            }
+        });
+    }
+
+    @Override
     public void onAlarmSet(final DateTime time, final Duration duration) {
         System.out.println("onAlarmSet(" + time + "," + duration + ")");
         new Thread(new Runnable() {
@@ -99,6 +110,21 @@ public final class AlarmClockApplication implements Clock.ClockObserver, UI.Obse
                 alarmBell.ring();
             }
         });
+    }
+
+    @Override
+    public void onStopped() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                ui.stop();
+            }
+        });
+    }
+
+    @Override
+    public void onStopRequested() {
+        alarmClock.stop();
     }
 
 }

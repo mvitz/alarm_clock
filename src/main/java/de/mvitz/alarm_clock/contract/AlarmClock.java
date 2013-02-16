@@ -9,11 +9,15 @@ public interface AlarmClock {
 
     void time(DateTime time);
 
+    void stop();
+
     void addObserver(Observer observer);
 
     interface Observer {
+        void onStart();
         void onRemainingTime(Duration remainingTime);
         void onExpired();
+        void onStopped();
     }
 
 }
