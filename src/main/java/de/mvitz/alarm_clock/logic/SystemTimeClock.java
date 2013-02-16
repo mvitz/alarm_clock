@@ -1,4 +1,4 @@
-package de.mvitz.alarm_clock.clock;
+package de.mvitz.alarm_clock.logic;
 
 import java.util.LinkedList;
 import java.util.List;
