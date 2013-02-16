@@ -13,6 +13,7 @@ public interface AlarmClock {
 
     interface Observer {
         void onRemainingTime(Duration remainingTime);
+        void onExpired();
     }
 
 }

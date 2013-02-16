@@ -5,12 +5,14 @@ import javax.swing.SwingUtilities;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
+import de.mvitz.alarm_clock.contract.AlarmBell;
 import de.mvitz.alarm_clock.contract.AlarmClock;
 import de.mvitz.alarm_clock.contract.Clock;
 import de.mvitz.alarm_clock.contract.UI;
 import de.mvitz.alarm_clock.logic.DefaultAlarmClock;
 import de.mvitz.alarm_clock.logic.SystemTimeClock;
 import de.mvitz.alarm_clock.ui.MainWindow;
+import de.mvitz.alarm_clock.ui.PopupAlarmBell;
 
 public final class AlarmClockApplication implements Clock.ClockObserver, UI.Observer,
         AlarmClock.Observer {
@@ -18,18 +20,19 @@ public final class AlarmClockApplication implements Clock.ClockObserver, UI.Obse
     private final UI ui;
     private final Clock clock;
     private final AlarmClock alarmClock;
+    private final AlarmBell alarmBell;
 
     private AlarmClockApplication() {
         // build
         ui = new MainWindow();
         clock = new SystemTimeClock();
         alarmClock = new DefaultAlarmClock();
+        alarmBell = new PopupAlarmBell();
 
         // bind
         ui.addObserver(this);
         clock.addObserver(this);
         alarmClock.addObserver(this);
-
     }
 
     private void onStartup() {
@@ -82,6 +85,18 @@ public final class AlarmClockApplication implements Clock.ClockObserver, UI.Obse
             @Override
             public void run() {
                 ui.remainingTime(remainingTime);
+            }
+        });
+    }
+
+    @Override
+    public void onExpired() {
+        System.out.println("onExpired()");
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                ui.expire();
+                alarmBell.ring();
             }
         });
     }

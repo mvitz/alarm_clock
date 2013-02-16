@@ -50,6 +50,11 @@ public final class MainWindow implements UI, MainView.Observer {
     }
 
     @Override
+    public void expire() {
+        view.setRemainingTime(new Duration(0));
+    }
+
+    @Override
     public void onStart() {
         final DateTime alarmTime = view.getAlarmTime();
         final Duration idlePeriod = view.getIdlePeriod();

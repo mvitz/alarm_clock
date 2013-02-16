@@ -28,8 +28,14 @@ public final class DefaultAlarmClock implements AlarmClock {
         started = true;
         while (started) {
             final Duration remainingTime = calculateRemainingTime(alarmTime);
+            if (remainingTime.isShorterThan(new Duration(0))) {
+                started = false;
+            }
             for (final Observer observer : observers) {
                 observer.onRemainingTime(remainingTime);
+                if (!started) {
+                    observer.onExpired();
+                }
             }
             try {
                 TimeUnit.SECONDS.sleep(1);

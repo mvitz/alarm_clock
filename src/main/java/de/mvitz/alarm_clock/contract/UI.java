@@ -11,6 +11,8 @@ public interface UI {
 
     void remainingTime(Duration remainingTime);
 
+    void expire();
+
     void addObserver(Observer observer);
 
     interface Observer {
